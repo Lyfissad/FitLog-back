@@ -1,22 +1,20 @@
-import pkg from "pg"
+const { MongoClient } = require('mongodb');
+const uri = 'mongodb+srv://<user>:<password>@anime-hub.vwvmjos.mongodb.net/?retryWrites=true&w=majority';
 
-const { Pool } = pkg
+const client = new MongoClient(process.env.DATABASE_URI);
 
-import dotenv from 'dotenv';
+async function connectDB() {
+  try {
+    await client.connect();
+    const db = client.db('Fitlog');
+    const users = db.collection('Users');
+    console.log('Connected to MongoDB');
+    
+    const allUsers = await users.find({}).toArray();
+    console.log(allUsers);
+  } catch (err) {
+    console.error('connection error', err);
+  }
+}
 
-dotenv.config();
-
-
-
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false, // required for Supabase
-  },
-});
-
-pool.connect()
-.then(() => console.log("connected to SUPABASE"))
-.catch((err) => {console.error("connection error", err)})
-
-export default pool;
+connectDB();

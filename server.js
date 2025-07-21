@@ -1,47 +1,40 @@
-import pool from "./config/db.js"
 import dotenv from "dotenv"
-import express, { json } from "express"
-
+import express from "express"
+import { MongoClient } from "mongodb";
 
 
 dotenv.config()
 
 
-const app = express()
+const app = express();
+const PORT = process.env.PORT || 5000;
 
-const PORT = process.env.PORT
+const uri = process.env.MONGO_URI;
+const client = new MongoClient(process.env.DATABASE_URI);
 
-app.use(express.json())
+let usersCollection;
 
-
-
-app.get("/",(req, res) => {
-    res.send("API is working");
-})
-
-
-app.get("/users", async (req, res) => {
-    try{
-        const results = await pool.query("SELECT * FROM users")
-        res.json(results.rows)
-    }
-    catch(err){
-        console.error("An error occured")
-        res.status(500).send("Server not working bitch")
-    }
-})
-
-app.get('/dbtest', async (req, res) => {
+async function connectDB() {
   try {
-    const result = await pool.query('SELECT NOW()');
-    res.json(result.rows);
+    await client.connect();
+    const db = client.db('Fitlog'); 
+    usersCollection = db.collection('Users');
+    console.log('MongoDB connected');
   } catch (err) {
-    console.error('❌ DB Error:', err);
-    res.status(500).send('Database not connected');
+    console.error('connection error', err);
+  }
+}
+
+connectDB();
+
+app.get('/', async (req, res) => {
+  try {
+    const users = await usersCollection.find({}).toArray();
+    res.json(users);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server error');
   }
 });
 
-
-app.listen(PORT, () => {
-    console.log("Server running on port 5000")
-})
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
