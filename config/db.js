@@ -17,6 +17,6 @@ const pool = new Pool({
 
 pool.connect()
 .then(() => console.log("connected to SUPABASE"))
-.catch(() => {console.error("connection error")})
+.catch((err) => {console.error("connection error", err)})
 
 export default pool;
