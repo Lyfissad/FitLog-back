@@ -1,6 +1,6 @@
 import dotenv from "dotenv"
 import express from "express"
-import { MongoClient } from "mongodb";
+import mongoose from "mongoose";
 
 
 dotenv.config()
@@ -8,32 +8,27 @@ dotenv.config()
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const MONGO_URI = process.env.DATABASE_URI
 
-const uri = process.env.MONGO_URI;
-const client = new MongoClient(process.env.DATABASE_URI);
+mongoose.connect(MONGO_URI)
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.log("MongoDB connection error:", err));
 
-let usersCollection;
+const userSchema = new mongoose.Schema({
+  name: String,
+  email: String,
+  age: Number,
+});
 
-async function connectDB() {
-  try {
-    await client.connect();
-    const db = client.db('Fitlog'); 
-    usersCollection = db.collection('Users');
-    console.log('MongoDB connected');
-  } catch (err) {
-    console.error('connection error', err);
-  }
-}
-
-connectDB();
+const User = mongoose.model('User', userSchema, 'Users'); 
 
 app.get('/', async (req, res) => {
   try {
-    const users = await usersCollection.find({}).toArray();
+    const users = await User.find({});
     res.json(users);
   } catch (err) {
     console.error(err);
-    res.status(500).send('Server error');
+    res.status(500).send('Server Error');
   }
 });
 
