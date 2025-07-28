@@ -7,6 +7,7 @@ dotenv.config()
 
 
 const app = express();
+app.use(express.json())
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.DATABASE_URI
 
@@ -36,12 +37,12 @@ app.get('/', async (req, res) => {
 
 app.post("/signup", async (req, res) => {
     try{
-      const {name, email, password} = await req.body
+      const {name, email, password} = req.body
 
       if(!name || !email || !password){
         return res.status(400).json({message: "All fields are required for account"})
       }
-      const existingUser = User.findOne({ email })
+      const existingUser = await User.findOne({ email })
 
       if (existingUser){
         return res.status(409).json({message: "User already exists"})
