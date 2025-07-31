@@ -2,6 +2,9 @@ import dotenv from "dotenv"
 import express from "express"
 import mongoose from "mongoose";
 import bcrypt, { hash } from "bcrypt"
+import cors from "cors";
+
+
 
 dotenv.config()
 
@@ -10,6 +13,14 @@ const app = express();
 app.use(express.json())
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.DATABASE_URI
+
+
+
+app.use(cors({
+  origin: "http://localhost:3000",
+  credentials: true,
+}));
+
 
 mongoose.connect(MONGO_URI)
   .then(() => console.log("MongoDB connected"))
