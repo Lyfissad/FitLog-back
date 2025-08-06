@@ -17,7 +17,10 @@ const MONGO_URI = process.env.DATABASE_URI
 
 
 app.use(cors({
-  origin: "http://localhost:3000",
+  origin: [
+    "http://localhost:3000",
+    "https://fit-log-indol.vercel.app"
+  ],
   credentials: true,
 }));
 
@@ -72,5 +75,9 @@ app.post("/signup", async (req, res) => {
       res.status(400).json({message: "server error while signing up"})
     }
 });
+
+
+
+
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
