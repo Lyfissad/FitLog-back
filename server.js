@@ -76,6 +76,24 @@ app.post("/signup", async (req, res) => {
     }
 });
 
+app.post("/login", async (req,res) => {
+  try{
+    const {email, password} = req.body
+
+    if (!email || !password){
+      return res.status(400).json({message: "All credentials required for login"})
+    }
+    const existingUser = await User.findOne({ email })
+
+    if(!existingUser){
+      return res.status(404).json({message: "User does not exist."})
+    }
+    const valid = await bcrypt.compare(password, existingUser.password)
+
+
+    
+  }
+})
 
 
 
