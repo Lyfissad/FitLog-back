@@ -3,14 +3,15 @@ import express from "express"
 import mongoose from "mongoose";
 import bcrypt, { hash } from "bcrypt"
 import cors from "cors";
-
-
+import jwt from "jsonwebtoken"
+import cookieParser from "cookie-parser"
 
 dotenv.config()
 
 
 const app = express();
 app.use(express.json())
+app.use(cookieParser())
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.DATABASE_URI
 
@@ -83,15 +84,43 @@ app.post("/login", async (req,res) => {
     if (!email || !password){
       return res.status(400).json({message: "All credentials required for login"})
     }
+
+
     const existingUser = await User.findOne({ email })
 
-    if(!existingUser){
-      return res.status(404).json({message: "User does not exist."})
-    }
-    const valid = await bcrypt.compare(password, existingUser.password)
 
+    if(!existingUser){
+      return res.status(404).json({message: "Invalid credentials"})
+    }
+
+    const valid = await bcrypt.compare(password, existingUser.password);
+
+
+    const token = jwt.sign({id:existingUser.id}, process.env.JWT_SECRET, {expiresIn: "1d"});
 
     
+
+
+
+    if(valid){
+      res.cookie("token", token, {
+          httpOnly:true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "strict",
+          maxAge: 24 * 60 * 60 * 1000
+        })
+        return res.status(200).json({message: "Login successful"})
+      }
+      
+
+    
+    if(!valid){
+      return res.status(401).json({message: "Incorrect Password"})
+    }
+  }
+  catch(err){
+      console.log("Server Login error")
+      res.status(400).json({message: "Server login error"})
   }
 })
 
