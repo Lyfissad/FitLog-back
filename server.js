@@ -96,13 +96,14 @@ app.post("/login", async (req,res) => {
     const valid = await bcrypt.compare(password, existingUser.password);
 
 
-    const token = jwt.sign({id:existingUser.id}, process.env.JWT_SECRET, {expiresIn: "1d"});
+    
 
     
 
 
 
     if(valid){
+      const token = jwt.sign({id:existingUser.id}, process.env.JWT_SECRET, {expiresIn: "1d"});
       res.cookie("token", token, {
           httpOnly:true,
           secure: process.env.NODE_ENV === "production",
