@@ -122,7 +122,7 @@ app.post("/login", async (req,res) => {
 
 
 app.get("/profile", Auth, (req, res) => {
-  return res.json({message: `Welcome ${req.user.name}`})
+  return res.status(200).json({message: "going to profile"})
 })
 
 
