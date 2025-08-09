@@ -5,6 +5,8 @@ import bcrypt, { hash } from "bcrypt"
 import cors from "cors";
 import jwt from "jsonwebtoken"
 import cookieParser from "cookie-parser"
+import { Auth } from "./middleware/verifyToken";
+
 
 dotenv.config()
 
@@ -95,13 +97,6 @@ app.post("/login", async (req,res) => {
 
     const valid = await bcrypt.compare(password, existingUser.password);
 
-
-    
-
-    
-
-
-
     if(valid){
       const token = jwt.sign({id:existingUser.id}, process.env.JWT_SECRET, {expiresIn: "1d"});
       res.cookie("token", token, {
@@ -125,6 +120,10 @@ app.post("/login", async (req,res) => {
   }
 })
 
+
+app.get("/profile", Auth, (req, res) => {
+  return res.json({message: `Welcome ${req.user.name}`})
+})
 
 
 
