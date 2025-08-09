@@ -5,7 +5,7 @@ import bcrypt, { hash } from "bcrypt"
 import cors from "cors";
 import jwt from "jsonwebtoken"
 import cookieParser from "cookie-parser"
-import { Auth } from "./middleware/verifyToken";
+import { Auth } from "./middleware/verifyToken.js";
 
 
 dotenv.config()
