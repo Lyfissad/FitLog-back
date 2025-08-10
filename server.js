@@ -121,10 +121,21 @@ app.post("/login", async (req,res) => {
 })
 
 
-app.get("/profile", Auth, (req, res) => {
-  return res.status(200).json({message: "going to profile"})
-})
-
+app.get("/profile", Auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("name email"); // no password
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json({
+      message: "Profile loaded",
+      user
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
