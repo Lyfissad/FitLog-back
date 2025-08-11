@@ -53,10 +53,13 @@ app.get('/', async (req, res) => {
 
 app.post("/signup", async (req, res) => {
     try{
-      const {name, email, password} = req.body
+      const {name, email, password, cPassword} = req.body
 
       if(!name || !email || !password){
         return res.status(400).json({message: "All fields are required for account"})
+      }
+      if(password !== cPassword){
+        return res.status(400).json({message: "Passwords don't match"})
       }
       const existingUser = await User.findOne({ email })
 
@@ -122,20 +125,19 @@ app.post("/login", async (req,res) => {
 
 
 app.get("/profile", Auth, async (req, res) => {
+  console.log("req.user:", req.user); // check if it's set
   try {
-    const user = await User.findById(req.user.id).select("name email"); // no password
+    const user = await User.findById(req.user?.id).select("name email");
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    res.status(200).json({
-      message: "Profile loaded",
-      user
-    });
+    res.status(200).json({ message: "Profile loaded", user });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
   }
 });
+
 
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
