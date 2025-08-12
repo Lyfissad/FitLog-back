@@ -127,7 +127,7 @@ app.post("/login", async (req,res) => {
 app.get("/profile", Auth, async (req, res) => {
   console.log("req.user:", req.user); 
   try {
-    const user = await User.findById(req.user?.id).select("name");
+    const user = await User.findById(req.user?.id).select("id name email ");
     console.log(user)
     if (!user) {
       return res.status(404).json({ message: "User not found" });
