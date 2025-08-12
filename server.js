@@ -125,13 +125,14 @@ app.post("/login", async (req,res) => {
 
 
 app.get("/profile", Auth, async (req, res) => {
-  console.log("req.user:", req.user); // check if it's set
+  console.log("req.user:", req.user); 
   try {
-    const user = await User.findById(req.user?.id).select("name email");
+    const user = await User.findById(req.user?.id).select("name");
+    console.log(user)
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    res.status(200).json({ message: "Profile loaded", user: req.user });
+    res.status(200).json({ message: "Profile loaded", user: user });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Server error" });
