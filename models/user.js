@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import measurementSchema from "./measurement";
+import measurementSchema from "./measurement.js";
 
 
 const userSchema = new mongoose.Schema({
@@ -12,6 +12,6 @@ const userSchema = new mongoose.Schema({
 
 
 
-const User = mongoose.model("User", userSchema, "Users")
+const User = mongoose.models.User || mongoose.model("User", userSchema, "Users")
 
 export default User

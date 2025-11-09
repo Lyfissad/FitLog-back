@@ -6,9 +6,10 @@ const measurementSchema = new mongoose.Schema({
     type: { type:String, required: true },
     value: { type:Number, required: true },
     unit: { type: String, required:true },
-    date: { type: date, default: Date.now },
+    date: { type: Date, default: Date.now },
     note: { type: String }
 })
 
+const measurement = mongoose.model("Measurement", measurementSchema, "Measurement")
 
 export default measurementSchema

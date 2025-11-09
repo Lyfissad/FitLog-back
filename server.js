@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 import cookieParser from "cookie-parser"
 import { verifyToken } from "./middleware/verifyToken.js";
+import User from "./models/user.js";
 import authRoutes from "./routes/Auth.js"
 import Stripe from "stripe";
 
@@ -32,13 +33,6 @@ mongoose.connect(MONGO_URI)
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.log("MongoDB connection error:", err));
 
-const userSchema = new mongoose.Schema({
-  name: String,
-  email: String,
-  password:String,
-});
-
-const User = mongoose.model('User', userSchema, 'Users');
 
 
 app.get('/', async (req, res) => {
